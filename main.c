@@ -38,9 +38,9 @@ City cities[MAX_CITIES];
 int cityCount = 0;
 int distance[MAX_CITIES][MAX_CITIES];
 Vehicle vehicles[3] = {
-{"Van" , 1000, 30, 60, 12},
-{"Truck" , 5000, 40, 50, 6},
-{"Lorry" , 10000, 80, 45, 4}
+{1000, 30, 60, 12, "Van"},
+{5000, 40, 50, 6, "Truck"},
+{10000, 80, 45, 4, "Lorry"}
 };
 
 Delivery deliveries[MAX_DELIVERIES];
@@ -103,6 +103,85 @@ int main() {
 
 void clear_input_buffer() {
     int ch;
-    while ((ch = getchar()) != '
-' && ch != EOF);
+    while ((ch = getchar()) != '\n' && ch != EOF);
 }
+void add_city() {
+    if (cityCount >= MAX_CITIES) {
+        printf("City limit reached.");
+        return;
+    }
+    char new_name[CITY_NAME_LEN];
+    printf("Enter city name to add: ");
+    fgets(new_name, CITY_NAME_LEN, stdin);
+    new_name[strcspn(new_name, "")] = 0;
+
+    for (int i = 0; i < cityCount; i++) {
+        if (strcasecmp(cities[i].name, new_name) == 0) {
+            printf("City name already exists.");
+            return;
+        }
+    }
+    strcpy(cities[cityCount].name, new_name);
+    for (int i = 0; i <= cityCount; i++) {
+        distance[cityCount][i] = 0;
+          distance[i][cityCount] = 0;
+    }
+    cityCount++;
+    printf("City '%s' added successfully.", new_name);
+}
+
+void rename_city() {
+    if (cityCount == 0) {
+        printf("No cities to rename.");
+        return;
+    }
+    int idx;
+    printf("Enter city index to rename (0 to %d) :", cityCount-1);
+    for (int i=0; i<cityCount; i++) {
+        printf("%d: %s", i, cities[i].name);
+    }
+    if(scanf("%d", &idx)!=1) {
+        printf("Invalid input.");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+    if (idx < 0 || idx >= cityCount) {
+        printf("Invalid city index.");
+        return;
+    }
+    char new_name[CITY_NAME_LEN];
+    printf("Enter new name for city '%s': ", cities[idx].name);
+    fgets(new_name, CITY_NAME_LEN, stdin);
+    new_name[strcspn(new_name, "")] = 0;
+
+    for (int i = 0; i < cityCount; i++) {
+        if (i != idx && strcasecmp(cities[i].name, new_name) == 0) {
+            printf("Another city already has this name.");
+            return;
+        }
+    }
+    strcpy(cities[idx].name, new_name);
+    printf("City renamed successfully.");
+}
+
+void remove_city() {
+    if (cityCount == 0) {
+        printf("No cities to remove.");
+        return;
+    }
+    int idx;
+    printf("Enter city index to remove (0 to %d) :", cityCount-1);
+    for (int i=0; i<cityCount; i++) {
+        printf("%d: %s", i, cities[i].name);
+    }
+    if(scanf("%d", &idx)!=1) {
+        printf("Invalid input.");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+    if (idx < 0 || idx >= cityCount) {
+        printf("Invalid city index.");
+        return;
+    }
